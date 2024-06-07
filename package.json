@@ -1,0 +1,19 @@
+{
+  "name": "status-code",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {},
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@playwright/test": "^1.44.1",
+    "@types/node": "^20.14.1"
+  },
+  "dependencies": {
+    "nodemailer": "^6.9.13",
+    "playwright": "^1.44.1",
+    "xlsx": "^0.18.5"
+  }
+}

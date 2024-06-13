@@ -1,6 +1,6 @@
 // @ts-check
 const { test, expect } = require('@playwright/test');
-const { randomDelay, logResponses, saveResponsesToExcel } = require('../pages/functions');
+const { randomDelay, logResponses, saveResponsesToExcel,logFailure } = require('../pages/functions');
 const xlsx = require('xlsx');
 const fs = require('fs');
 
@@ -25,8 +25,9 @@ urls.forEach(({ country, url }) => {
     // Create an array to store URLs and status codes
     let responses = [];
     const mainUrl = url;
-    
-    await logResponses(page, responses, mainUrl);
+
+    try {
+      await logResponses(page, responses, mainUrl);
     await page.goto(mainUrl, { waitUntil: 'load' });
 
     // Additional manual wait if necessary
@@ -37,5 +38,8 @@ urls.forEach(({ country, url }) => {
 
     // Save responses to Excel file in a sheet named after the country
     await saveResponsesToExcel(responses, country, 'LMBC');
+    } catch (error) {
+      await logFailure(country, url, error.message, 'LMBC');
+    }
   });
 });

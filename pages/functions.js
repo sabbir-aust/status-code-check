@@ -100,4 +100,42 @@ async function saveResponsesToExcel(responses, sheetName, fileName) {
   xlsx.writeFile(workbook, filePath);
 }
 
-module.exports = { randomDelay, logResponses, saveResponsesToExcel };
+async function logFailure(country, url, errorMessage, projectName) {
+  const filePath = './error_log_report/failed_cases.xlsx';
+  const sheetName = projectName;
+
+  console.log(`Logging failure for ${country} - ${url}`);
+
+  let workbook;
+  if (fs.existsSync(filePath)) {
+    console.log('Failed cases file exists. Reading the existing file.');
+    workbook = xlsx.readFile(filePath);
+  } else {
+    console.log('Failed cases file does not exist. Creating a new workbook.');
+    workbook = xlsx.utils.book_new();
+  }
+
+  let existingData = [];
+  if (workbook.SheetNames.includes(sheetName)) {
+    console.log(`Sheet "${sheetName}" exists. Reading existing data.`);
+    const worksheet = workbook.Sheets[sheetName];
+    existingData = xlsx.utils.sheet_to_json(worksheet);
+  } else {
+    console.log(`Sheet "${sheetName}" does not exist. It will be created.`);
+  }
+
+  const newFailure = { country, url, errorMessage, timestamp: new Date().toISOString() };
+  existingData.push(newFailure);
+
+  const ws = xlsx.utils.json_to_sheet(existingData);
+  workbook.Sheets[sheetName] = ws;
+  if (!workbook.SheetNames.includes(sheetName)) {
+    xlsx.utils.book_append_sheet(workbook, ws, sheetName);
+  }
+
+  console.log(`Writing failed case data to file: ${filePath}`);
+  xlsx.writeFile(workbook, filePath);
+  console.log('Failed case data successfully written to file.');
+}
+
+module.exports = { randomDelay, logResponses, saveResponsesToExcel, logFailure };

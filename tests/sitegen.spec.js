@@ -21,7 +21,7 @@ function readUrlsFromExcel(filePath) {
 const urls = readUrlsFromExcel('urls.xlsx');
 
 urls.forEach(({ country, url }) => {
-  test(`has title and checks status code for abbviepro ${country} URL`, async ({ page }) => {
+  test(`has title and checks status code for Sitegen ${country} URL`, async ({ page }) => {
     // Create an array to store URLs and status codes
     let responses = [];
     const mainUrl = url;
@@ -39,7 +39,8 @@ urls.forEach(({ country, url }) => {
       // Save responses to Excel file in a sheet named after the country
       await saveResponsesToExcel(responses, country, 'Sitegen');
     } catch (error) {
-      await logFailure(country, url, error.message, 'Sitegen');
+      const statusCode = responses.find(response => response.url === mainUrl)?.status || 'Unknown';
+      await logFailure(country, url, error.message, statusCode, 'Sitegen');
     }
   });
 });

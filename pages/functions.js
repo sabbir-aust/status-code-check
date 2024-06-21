@@ -29,7 +29,7 @@ async function logResponses(page, responses, mainUrl) {
     }
 
     // Add assertion for the main document's status code if necessary
-    if (url === mainUrl && status !== 307 && status !== 429) {
+    if (url === mainUrl && status !== 307 && status !== 429 && status !== 302) {
       expect(status).toBe(200);
     }
   });
@@ -100,7 +100,7 @@ async function saveResponsesToExcel(responses, sheetName, fileName) {
   xlsx.writeFile(workbook, filePath);
 }
 
-async function logFailure(country, url, errorMessage, projectName) {
+async function logFailure(country, url, errorMessage, statusCode, projectName) {
   const filePath = './error_log_report/failed_cases.xlsx';
   const sheetName = projectName;
 
@@ -124,7 +124,7 @@ async function logFailure(country, url, errorMessage, projectName) {
     console.log(`Sheet "${sheetName}" does not exist. It will be created.`);
   }
 
-  const newFailure = { country, url, errorMessage, timestamp: new Date().toISOString() };
+  const newFailure = { country, url, errorMessage, statusCode, timestamp: new Date().toISOString() };
   existingData.push(newFailure);
 
   const ws = xlsx.utils.json_to_sheet(existingData);

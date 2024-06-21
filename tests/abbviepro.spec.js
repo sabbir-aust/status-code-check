@@ -39,7 +39,8 @@ urls.forEach(({ country, url }) => {
     // Save responses to Excel file in a sheet named after the country
     await saveResponsesToExcel(responses, country, 'Abbvie');
     } catch (error) {
-      await logFailure(country, url, error.message, 'Abbvie Pro');
+      const statusCode = responses.find(response => response.url === mainUrl)?.status || 'Unknown';
+      await logFailure(country, url, error.message, statusCode, 'AbbVie Pro');
     }
   });
 });
